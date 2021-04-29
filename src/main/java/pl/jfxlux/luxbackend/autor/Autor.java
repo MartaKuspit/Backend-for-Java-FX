@@ -28,8 +28,4 @@ public class Autor {
     }
 
 
-    public void updateAutor(AutorDto dto) {
-        this.setFirstName(dto.getFirstName());
-        this.setLastName(dto.getLastName());
-    }
 }
