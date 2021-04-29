@@ -1,5 +1,7 @@
 package pl.jfxlux.luxbackend.autor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +17,14 @@ public class AutorController {
         this.autorRepository = autorRepository;
     }
 
+    Logger logger = LoggerFactory.getLogger(AutorController.class);
+
     @PostMapping("list-of-autors")
     @ResponseStatus(HttpStatus.CREATED)
     public AutorDto addNewAutor(@RequestBody AutorDto dto) {
+        logger.info("Hurray!!! It works!!! :) " + "\n" +
+                "                                                                                                    "
+                + "You created new autor. ");
         return AutorDto.of(autorRepository.save(Autor.of(dto)));
 
     }
@@ -28,10 +35,12 @@ public class AutorController {
         autor.setFirstName(autorDto.getFirstName());
         autor.setLastName(autorDto.getLastName());
         autorRepository.save(autor);
+        logger.warn("You have changed autor's data");
     }
 
     @GetMapping("list-of-autors")
     public List<AutorDto> getAllAutors() {
+        logger.info("You asked me for a list of all authors, so here it is:)");
         return autorRepository.findAll().stream().map(AutorDto::of).collect(Collectors.toList());
     }
 
@@ -52,20 +61,12 @@ public class AutorController {
         List<Autor> all = autorRepository.findAll();
 
         String seekText = text.toLowerCase();
-        if (seekText == null || seekText.isEmpty()) {
-            return all.stream().map(AutorDto::of).collect(Collectors.toList());
-        }
+
         List<Autor> autors = all.stream()
                 .filter(autor -> autor.getFirstName().toLowerCase().contains(seekText)
                         || autor.getLastName().toLowerCase().contains(seekText)).collect(Collectors.toList());
-        if (autors != null){
-            return autors.stream().map(AutorDto::of).collect(Collectors.toList());
-        }else {
-            return all.stream().map(AutorDto::of).collect(Collectors.toList());
-        }
 
+        return autors.stream().map(AutorDto::of).collect(Collectors.toList());
 
     }
-
-
 }
